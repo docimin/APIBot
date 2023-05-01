@@ -103,25 +103,29 @@ function removeDuplicates(array) {
 }
 
 async function getImages() {
-    const channel = await client.channels.fetch(imageChannel);
-    if (!channel) {
-        console.log(`Error: could not find channel with ID ${imageChannel}.`);
-        return [];
-    }
-    const messages = await channel.messages.fetch();
-    const images = [];
-    messages.forEach((message) => {
-        message.attachments.forEach((attachment) => {
-            const fileExtension = attachment.name.split('.').pop().toLowerCase();
-            if (fileExtension === 'jpg' || fileExtension === 'png') {
-                images.unshift({
-                    id: images.length + 1,
-                    url: attachment.url
-                });
-            }
+    try {
+        const channel = await client.channels.fetch(imageChannel);
+        if (!channel) {
+            throw new Error(`Could not find channel with ID ${imageChannel}.`);
+        }
+        const messages = await channel.messages.fetch();
+        const images = [];
+        messages.forEach((message) => {
+            message.attachments.forEach((attachment) => {
+                const fileExtension = attachment.name.split('.').pop().toLowerCase();
+                if (fileExtension === 'jpg' || fileExtension === 'png') {
+                    images.unshift({
+                        id: images.length + 1,
+                        url: attachment.url
+                    });
+                }
+            });
         });
-    });
-    return images;
+        return images;
+    } catch (e) {
+        console.log(`Error: ${e}`);
+        throw new Error('Failed to fetch images');
+    }
 }
 
 router.get('/', (req, res) => {
@@ -141,9 +145,9 @@ router.get('/getimages', async (req, res) => {
             images: images
         });
     } catch (e) {
+        console.log(`Error: ${e}`);
         console.log("Error caused by the following ip: " + req.ip);
         console.log("Error caused by the following origin: " + req.headers.origin);
-        console.log(e);
         res.status(500).send({
             error: "Failed to fetch images"
         });
