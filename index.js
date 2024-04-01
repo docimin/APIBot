@@ -1,5 +1,6 @@
 const express = require('express');
 const {Client} = require('discord.js');
+require('dotenv').config();
 
 const client = new Client({
     intents: [
@@ -11,12 +12,12 @@ const client = new Client({
     ],
 });
 
+console.log(process.env.TOKEN)
 
-const botToken = ""; // Bot Token
-const port = 3333; // Port for the API
-const guildId = ""; // Guild ID to fetch the members from
-const imageChannel = "" // Channel ID to fetch the images from
-
+const botToken = process.env.TOKEN; // Bot Token
+const port = process.env.PORT || 3333; // Port for the API
+const guildId = process.env.GUILDID; // Guild ID to fetch the members from
+const imageChannel = process.env.IMAGECHANNEL // Channel ID to fetch the images from
 
 const app = express();
 app.use(express.json());
