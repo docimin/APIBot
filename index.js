@@ -12,8 +12,6 @@ const client = new Client({
     ],
 });
 
-console.log(process.env.TOKEN)
-
 const botToken = process.env.TOKEN; // Bot Token
 const port = process.env.PORT || 3333; // Port for the API
 const guildId = process.env.GUILDID; // Guild ID to fetch the members from
