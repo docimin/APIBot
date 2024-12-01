@@ -184,6 +184,29 @@ router.get('/getrandomimages', async (req, res) => {
     }
 });
 
+router.get('/getspotifystatus', async (req, res) => {
+    try {
+        let guild = await client.guilds.fetch(guildId);
+        let member = await guild.members.fetch(req.query.member);
+        let presence = member.presence.activities;
+        let spotify = getSpotify(presence);
+        if (spotify === {} || spotify === undefined) spotify = "undefined";
+        res.status(200).send({
+            spotify: spotify
+        });
+    } catch (e) {
+        console.log("Error caused by the following ip: " + req.ip);
+        console.log("Error caused by the following origin: " + req.headers.origin);
+        console.log(e);
+        res.status(500).send({
+            status: "undefined",
+            activities_raw: "undefined",
+            parsed_activities: "undefined",
+            spotify: "undefined"
+        });
+    }
+});
+
 router.get('/getstatus', async (req, res) => {
     try {
         let guild = await client.guilds.fetch(guildId);
