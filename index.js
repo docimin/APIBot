@@ -1,14 +1,14 @@
 const express = require('express');
-const {Client} = require('discord.js');
+const {Client, GatewayIntentBits} = require('discord.js');
 require('dotenv').config();
 
 const client = new Client({
     intents: [
-        1, // GUILDS
-        2, // GUILD_MEMBERS
-        16, // GUILD_PRESENCES
-        32, // GUILD_MESSAGES
-        256 // GUILD_PRESENCES
+        GatewayIntentBits.Guilds, // 1
+        GatewayIntentBits.GuildMembers, // 2
+        GatewayIntentBits.GuildIntegrations, // 16
+        GatewayIntentBits.GuildWebhooks, // 32
+        GatewayIntentBits.GuildPresences // 256
     ],
 });
 
@@ -190,7 +190,6 @@ router.get('/getspotifystatus', async (req, res) => {
         let member = await guild.members.fetch(req.query.member);
         let presence = member.presence.activities;
         let spotify = getSpotify(presence);
-        if (spotify === {} || spotify === undefined) spotify = "undefined";
         res.status(200).send({
             spotify: spotify
         });
@@ -215,7 +214,6 @@ router.get('/getstatus', async (req, res) => {
         let presence = member.presence.activities;
         let activities_simplified = simplifyActivities(presence)
         let spotify = getSpotify(presence);
-        if (spotify === {} || spotify === undefined) spotify = "undefined";
         res.status(200).send({
             status: status,
             activities_raw: presence,
@@ -237,7 +235,8 @@ router.get('/getstatus', async (req, res) => {
 
 
 app.use('/', router);
-app.listen(port, () => {
+app.listen(port, (error) => {
+    if (error) throw error;
     console.log(`API Server running on port ${port}`);
 });
 
